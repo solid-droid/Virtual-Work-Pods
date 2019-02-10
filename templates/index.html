@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>UI #1 - Nav Buttons</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css'>
+
+      <link rel="stylesheet" href="css/style.css" type="text/css">
+
+  
+</head>
+
+<body>
+<video class="v2" id="v2" autoplay></video>
+<div class="stat">
+<div id="status" class="status">Status:</div>
+<button id="test" onclick="testMessage()">test</button>
+<div class="message" id="message"></div>
+</div>
+<div class="buttons-container">
+  <ul>
+    <li title="Create Room" onclick="change(1)"><a href="#" ><i class="fa fa-align-left" aria-hidden="true"></i></a></li>
+    <li title="Join a Room" onclick="change(2)"><a href="#" ><i class="fa fa-align-right" aria-hidden="true"></i></a></li>
+    <li title="Running Status" onclick="change(3)"><a href="#" ><i class="fa fa-cogs" aria-hidden="true"></i></a></li>
+    <li title="About Us" onclick="change(4)"><a href="#" ><i class="fa fa-user-circle" aria-hidden="true"></i></a></li>
+  </ul>
+</div>
+  
+<div class="stream_self">
+    <video id="v1" height="100" width="140" autoplay muted></video>
+    
+</div>
+
+
+<div class="created-by">
+  <p id="content"></p>
+</div>
+  
+  
+
+    <script  src="js/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.18/peer.min.js"></script>
+    <script  src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.29.0/sweetalert2.all.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</body>
+
+</html>
