@@ -4,6 +4,60 @@ var message = document.getElementById("message");
 var lastPeerId = null;
 var peer = null;
 var conn = null;
+var id;
+///////////////////////////////////////////////////////////////
+// WebSocket Portion
+// WebSockets work with the HTTP server
+var socket = require('socket.io');
+var io = socket(server);
+
+// Register a callback function to run when we have an individual connection
+// This is run for each individual user that connects
+io.sockets.on('connection',
+  // We are given a websocket object in our function
+  function (socket) {
+  
+    console.log("We have a new client: " + socket.id);
+  
+    // When this user emits, client side: socket.emit('otherevent',some data);
+    socket.on('plainString', function(data) {
+        // Data comes in as whatever was sent, including objects
+        console.log("Recieved and Transmitted:" + JSON.stringify(data));
+    
+        // Send it to all other clients
+        //socket.broadcast.emit('to_webpage', data);
+        socket.broadcast.emit('to_webpage', data);
+        // This is a way to send to everyone including sender
+        // io.sockets.emit('message', "this goes to everyone");
+
+      }
+    );
+    
+  socket.on('jsonObject',
+      function(data) {
+        // Data comes in as whatever was sent, including objects
+        console.log("Connection success:" + data.Time);
+      
+        // Send it to all other clients
+        socket.broadcast.emit('to_webpage', data);
+        
+        // This is a way to send to everyone including sender
+        // io.sockets.emit('message', "this goes to everyone");
+
+      }
+    );
+  
+    socket.on('disconnect', function() {
+      console.log("Client has disconnected");
+    });
+  }
+);
+
+
+var socket = io();
+socket = io.connect('http://ae917206.ngrok.io');
+socket.on('to_webpage', function(data) {console.log("Got: " + data.Time)})
+
 ///////////////////////////////////////////////////////////////
 const mediaStreamConstraints = {
   video: true,
@@ -58,6 +112,7 @@ swal.mixin({
 ]).then((result) => {
   if (result.value) {
     id=result.value;
+    tag=String(id);
     create_token();
     flag=1;
     swal({
@@ -96,7 +151,8 @@ function join_room()
     }
   ]).then((result) => {
     if (result.value) {
-      id=result.value;
+      tag=result.value;
+      get_id(String(tag));
       set_token();
       swal({
         title: 'Join Success',
@@ -123,7 +179,10 @@ function set_token()
 
 /////////////////////////////////////////////////
 function initialize_peer_reciever()
-{
+{ 
+  lastPeerId = null;
+  peer = null;
+  conn = null;
   var status = document.getElementById("status");
     function initialize() 
     {
@@ -137,6 +196,7 @@ function initialize_peer_reciever()
             }
             console.log('ID: ' + peer.id);
             status.innerHTML = "ID: " + peer.id;
+            $.post('insert_master.php',{key:tag,v:peer.id},function(data){});
          
         });
         peer.on('connection', function (c) {
@@ -150,7 +210,7 @@ function initialize_peer_reciever()
           }
 
           conn = c;
-          console.log("Connected to: " + conn.peer);
+          console.log("Status: Connected");
           status.innerHTML = "Connected"
           ready();
       });
@@ -207,12 +267,15 @@ initialize();
 }
 
 function initialize_peer_transmiter()
-{
+{lastPeerId = null;
+ peer = null;
+ conn = null;
  var lastPeerId = null;
  var status = document.getElementById("status");
    function initialize() {
     // Create own peer object with connection to shared PeerJS server
     peer = new Peer(null, {debug: 2});  
+    
     peer.on('open', function (id) {
         // Workaround for peer.reconnect deleting previous id
         if (peer.id === null) {
@@ -250,12 +313,13 @@ function join() {
   }
 
   // Create connection to destination peer specified in the input field
+  
   conn = peer.connect(id, {
       reliable: true
   });
 
   conn.on('open', function () {
-      status.innerHTML = "Connected to: " + conn.peer;
+      status.innerHTML = "Status: Connected";
       console.log("Connected to: " + conn.peer);
 
       // Check URL params for comamnds that should be sent immediately
@@ -304,9 +368,10 @@ function testMessage()
     conn.send(msg);
     console.log("Sent: " + msg)
   }
-  video_stream_call()
+ 
 };
-
+ 
+function media_str(){video_stream_call()}
 
 
 function video_stream_call()
@@ -340,4 +405,17 @@ function video_stream_accept()
   call.on('stream', function(stream) {
     v2.srcObject = stream;
   });
+}
+
+
+
+function get_id(k)
+{
+  $.post('read_master.php',{key:k},
+  function(data)
+    {
+        data=data.substr(1).slice(0, -1);
+        id=data;
+     });
+
 }

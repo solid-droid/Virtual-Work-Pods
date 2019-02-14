@@ -16,8 +16,9 @@
 <body>
 <video class="v2" id="v2" autoplay></video>
 <div class="stat">
+<button id="test" onclick="testMessage()">Test_Msg</button>
+<button id="test" onclick="media_str()">MediaStream</button>
 <div id="status" class="status">Status:</div>
-<button id="test" onclick="testMessage()">test</button>
 <div class="message" id="message"></div>
 </div>
 <div class="buttons-container">
@@ -45,7 +46,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.18/peer.min.js"></script>
     <script  src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.29.0/sweetalert2.all.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>   
 </body>
 
 </html>
