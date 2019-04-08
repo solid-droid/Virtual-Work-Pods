@@ -46,18 +46,26 @@ void setup() {
 }
 
 unsigned long my_time;
-String myTimeString;
+String dataObject;
 
 
 void loop() {
     webSocket.loop();
     if (connected){
-    my_time = millis();
+      
+//  Put the Gyro values here    
+//    Gx = ;
+//    Gy = ;
+//    Gz = ;
+//    Ax = ;
+//    Ay = ; 
+//    Az = ; 
+
+    dataObject = "{\"Gx\":\"" + String(Gx) + ",\"Gy\":\"" + String(Gy) + ",\"Gz\":\"" + String(Gz) + ",\"Ax\":\"" + String(Ax) + ",\"Ay\":\"" + String(Ay) + ",\"Az\":\"" + String(Az) + "\"}";
     
-    //Data has to be in {}
-    myTimeString = "{\"Time\":\"" + String(my_time) + "\"}";
-    //plainString is label
-    webSocket.emit("plainString", myTimeString.c_str());
-    delay(1000);
+    // plainString is label used to get data on Node end
+    webSocket.emit("plainString", dataObject.c_str());
+    // Data is taken as data.Gx, data.Ay etc on Node end
+//    delay(1000);
     }
 }
