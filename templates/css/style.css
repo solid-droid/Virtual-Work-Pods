@@ -78,6 +78,14 @@ ul li a {
   left: 1%;
   top: 1%;
 }
+.status{
+  font-size: 20pt;
+  color: aliceblue;
+}
+.message{
+  font-size: 20pt;
+  color: aliceblue;
+}
 .v2{
   position: fixed;
   right: 0;

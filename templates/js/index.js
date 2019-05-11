@@ -5,60 +5,51 @@ var lastPeerId = null;
 var peer = null;
 var conn = null;
 var id;
+var prev_x=0;
+var prev_y=0;
+var socket;
 ///////////////////////////////////////////////////////////////
-// WebSocket Portion
-// WebSockets work with the HTTP server
-var socket = require('socket.io');
-var io = socket(server);
-
-// Register a callback function to run when we have an individual connection
-// This is run for each individual user that connects
-io.sockets.on('connection',
-  // We are given a websocket object in our function
-  function (socket) {
-  
-    console.log("We have a new client: " + socket.id);
-  
-    // When this user emits, client side: socket.emit('otherevent',some data);
-    socket.on('plainString', function(data) {
-        // Data comes in as whatever was sent, including objects
-        console.log("Recieved and Transmitted:" + JSON.stringify(data));
-    
-        // Send it to all other clients
-        //socket.broadcast.emit('to_webpage', data);
-        socket.broadcast.emit('to_webpage', data);
-        // This is a way to send to everyone including sender
-        // io.sockets.emit('message', "this goes to everyone");
-
-      }
-    );
-    
-  socket.on('jsonObject',
-      function(data) {
-        // Data comes in as whatever was sent, including objects
-        console.log("Connection success:" + data.Time);
-      
-        // Send it to all other clients
-        socket.broadcast.emit('to_webpage', data);
-        
-        // This is a way to send to everyone including sender
-        // io.sockets.emit('message', "this goes to everyone");
-
-      }
-    );
-  
-    socket.on('disconnect', function() {
-      console.log("Client has disconnected");
-    });
-  }
-);
-
-
-var socket = io();
-socket = io.connect('http://ae917206.ngrok.io');
-socket.on('to_webpage', function(data) {console.log("Got: " + data.Time)})
-
+var val_json;
+function begin_data()
+{
+socket = io();
+socket = io.connect('http://localhost:3000');
+if (document.getElementById("Glove").checked == true)
+recieve_socket();
+else if(document.getElementById("Robot").checked == true)
+transmit_socket();
+else{alert("Pick your side")}
+};
 ///////////////////////////////////////////////////////////////
+
+function recieve_socket()
+{
+  socket.on('to_webpage', function(data)
+  {
+    message.innerHTML="Recieved Data: "+data.pitch+" // "+data.roll;
+    console.log("check")
+    if (conn.open) {
+      msg=String(data.pitch);
+      console.log(data);
+      conn.send(msg);
+      console.log("Sent: " + msg)
+    }
+  });
+}
+
+function transmit_socket(mck)
+{
+  socket.on('connect', function(data) 
+  {
+  
+   console.log("demo");
+   socket.emit('to_node2', mck);
+         
+  })
+
+}
+
+/////////////////////////////////////////////////////////////////
 const mediaStreamConstraints = {
   video: true,
 };
@@ -79,7 +70,9 @@ for (let i = 0; i < lis.length; i++) {
     a[i].classList.add("active-text");
   });
 }
+//////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////
 function change(a)
 {
   switch(a)
@@ -94,6 +87,8 @@ function change(a)
     break;
   }
 };
+
+
 var id;
 var flag=0;
 function create_room()
@@ -251,9 +246,9 @@ function initialize_peer_reciever()
   };
   function ready() {
     conn.on('data', function (data) {
-        console.log("Data recieved");
-        var cueString = "<span class=\"cueMsg\">Cue: </span>";
-        addMessage("<span class=\"peerMsg\">Peer: </span>" + data);
+        console.log(data);
+        message.innerHTML=data;
+        transmit_socket(data);
       });
     conn.on('close', function () {
         status.innerHTML = "Connection reset<br>Awaiting connection...";
@@ -329,7 +324,9 @@ function join() {
   });
   // Handle incoming data (messages only since this is the signal sender)
   conn.on('data', function (data) {
+    
       addMessage("<span class=\"peerMsg\">Peer:</span> " + data);
+      val_json=data;
   });
   conn.on('close', function () {
       status.innerHTML = "Connection closed";
@@ -362,13 +359,14 @@ function addMessage(msg) {
 };
 
 function testMessage()
-{ status.innerHTML = "test_msg";
-  if (conn.open) {
-    msg="test message";
-    conn.send(msg);
-    console.log("Sent: " + msg)
-  }
- 
+{ 
+  // status.innerHTML = "test_msg";
+  // if (conn.open) {
+  //   msg="test message";
+  //   conn.send(msg);
+  //   console.log("Sent: " + msg)
+  // }
+begin_data();
 };
  
 function media_str(){video_stream_call()}
