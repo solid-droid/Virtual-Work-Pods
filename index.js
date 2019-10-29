@@ -11,7 +11,10 @@ function dcInit() {
   dc.onopen = () => log("Chat!");
   dc.onmessage = e => log(e.data);
 }
-
+function testing()
+{
+  console.log("Testing");
+}
 function createOffer() {
    dcInit(dc = pc.createDataChannel("chat"));
   haveGum.then(() => pc.createOffer()).then(d => pc.setLocalDescription(d))
