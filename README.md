@@ -15,4 +15,4 @@ Sends to remote robotic arm client over internet using WebRTC p2p communication.
   * MySQL
   * PHP.
 * Algorithms used:
- * Inverse Kinematics
+  * Inverse Kinematics
